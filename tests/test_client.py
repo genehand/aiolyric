@@ -68,6 +68,26 @@ async def test_request(
 
 
 @pytest.mark.asyncio
+async def test_request_accepted(
+    mock_aioresponse: aioresponses,
+    lyric_client: LyricClient,
+) -> None:
+    """Test the request method with a write that is queued by the API."""
+    mock_aioresponse.clear()
+    mock_aioresponse.post(
+        BASE_URL,
+        status=202,
+        payload={"TransactionId": "test"},
+    )
+    response = await lyric_client.request(
+        "POST",
+        BASE_URL,
+    )
+    assert response.status == 202
+    assert await response.json() == {"TransactionId": "test"}
+
+
+@pytest.mark.asyncio
 async def test_authentication_exception(
     mock_aioresponse: aioresponses,
     lyric_client: LyricClient,

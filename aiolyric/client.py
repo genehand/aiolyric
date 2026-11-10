@@ -78,20 +78,20 @@ class LyricClient:
                 headers=headers,
                 **kwargs,
             )
-        if response.status != 200:
-            if response.status == 401:
-                raise LyricAuthenticationException(
-                    {
-                        "request": {
-                            "method": method,
-                            "url": url,
-                            "headers": headers,
-                            **kwargs,
-                        },
-                        "response": await response.json(),
-                        "status": response.status,
-                    }
-                )
+        if response.status == 401:
+            raise LyricAuthenticationException(
+                {
+                    "request": {
+                        "method": method,
+                        "url": url,
+                        "headers": headers,
+                        **kwargs,
+                    },
+                    "response": await response.json(),
+                    "status": response.status,
+                }
+            )
+        if not 200 <= response.status < 300:
             raise LyricException(
                 {
                     "request": {
